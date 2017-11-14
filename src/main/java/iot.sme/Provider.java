@@ -16,7 +16,7 @@ import hu.mta.sztaki.lpds.cloud.simulator.DeferredEvent;
 import hu.mta.sztaki.lpds.cloud.simulator.Timed;
 import iot.sme.Application;
 import iot.sme.Scenario;
-import iot.sme.Sensor;
+import iot.sme.CityStation;
 
 public abstract class Provider extends Timed{
 	protected  class Bluemix{

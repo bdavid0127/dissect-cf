@@ -29,10 +29,10 @@ class Metering extends DeferredEvent {
 	private Repository r;
 
 	/**
-	 * This Sensor contains the repository. Ez a Sensor tarolja a
+	 * This station contains the repository. Ez a station tarolja a
 	 * repository-t.
 	 */
-	private Sensor s;
+	private CityStation s;
 
 	/**
 	 * When the simulation may stop it depends on all data are arrived. This var
@@ -46,7 +46,7 @@ class Metering extends DeferredEvent {
 	 * kesleltett esemenyt.
 	 * 
 	 * @param s
-	 *            Sensor, which contains the repository - amelyik Sensor
+	 *            station, which contains the repository - amelyik station
 	 *            tartalmazza a repository-t
 	 * @param sensorID
 	 *            sensor, which create the data - amelyik szenzor letrehozza az
@@ -56,7 +56,7 @@ class Metering extends DeferredEvent {
 	 * @param delay
 	 *            delay time for the event - kesleltetett ido az esemenyhez
 	 */
-	Metering(Sensor s, int sensorID, int filesize, long delay) {
+	Metering(CityStation s, int sensorID, int filesize, long delay) {
 		super(delay);
 		this.r = s.getRepo();
 		this.sensorID = sensorID;
@@ -77,8 +77,8 @@ class Metering extends DeferredEvent {
 				this.filesize, false);
 		if (this.r.registerObject(so)) {
 			this.s.generatedfilesize += this.filesize;
-			Sensor.allsensorsize += this.filesize;
-			Sensor.getSensorvalue()[cloudnumber] += this.filesize;
+			CityStation.allstationsize += this.filesize;
+			CityStation.getStationvalue()[cloudnumber] += this.filesize;
 			this.s.setMessagecount(this.s.getMessagecount() + 1);
 		}
 		;

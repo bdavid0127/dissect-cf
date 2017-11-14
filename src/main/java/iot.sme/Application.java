@@ -14,9 +14,9 @@ import hu.mta.sztaki.lpds.cloud.simulator.io.NetworkNode.NetworkException;
 import iotprovider.sme.Provider;
 
 /**
- * This class start virtual machines and run ComputeTasks on it depending on the generated data by the sensors.
- * Ez az osztaly dolgozza fel a sensor-ok altal generalt adatokat ComputeTask-okban.
- * Elinditja a sensor-oket, illetve kezeli a virtualis gepek inditasat es leallitasat is.
+ * This class start virtual machines and run ComputeTasks on it depending on the generated data by the stations.
+ * Ez az osztaly dolgozza fel a Station-ok altal generalt adatokat ComputeTask-okban.
+ * Elinditja a Station-oket, illetve kezeli a virtualis gepek inditasat es leallitasat is.
  */
 public class Application extends Timed {
 
@@ -121,7 +121,7 @@ public class Application extends Timed {
 	private static int feladatszam = 0;
 	private long tasksize;
 	private Cloud cloud;
-	public ArrayList<Sensor> sensors;
+	public ArrayList<CityStation> stations;
 	private String name;
 	private Provider provider; //TODO: app = user, egyeni arazas
 	
@@ -141,14 +141,14 @@ public class Application extends Timed {
 	/**
 	 * Privat konstruktor, hogy csak osztalyon belulrol lehessen hivni
 	 */
-	public Application(final long freq,long tasksize, boolean delay, int print,Cloud cloud,ArrayList<Sensor> sensors,String name,Provider p) {
+	public Application(final long freq,long tasksize, boolean delay, int print,Cloud cloud,ArrayList<CityStation> stations,String name,Provider p) {
 		subscribe(freq);
 		this.print = print;
 		this.vmlist = new ArrayList<VmCollector>();
 		this.delay = delay;
 		this.tasksize=tasksize;
 		this.cloud = cloud;
-		this.sensors = sensors;
+		this.stations = stations;
 		this.name = name;
 		this.provider=p;
 	}
@@ -169,9 +169,9 @@ public class Application extends Timed {
 	}
 
 	/**
-	 * A metodus elinditja az osszes sensor mukodeset
+	 * A metodus elinditja az osszes Station mukodeset
 	 */
-	private void startSensor() {
+	private void startStation() {
 		if(Application.starterVar==0){
 			for(Provider p : Provider.getProviderList()){
 				p.startProvider();
@@ -182,7 +182,7 @@ public class Application extends Timed {
 		}
 		if (this.i == 0) {
 			this.i++;
-			for (final Sensor s : this.sensors) {
+			for (final CityStation s : this.stations) {
 				Random randomGenerator = new Random();
 				int randomInt = randomGenerator.nextInt(21);
 				if (delay) {
@@ -258,11 +258,11 @@ public class Application extends Timed {
 	}
 
 	/**
-	 * A metodus megvizsgalja, hogy van-e olyan sensor, amelyik meg uzemel.
+	 * A metodus megvizsgalja, hogy van-e olyan Station, amelyik meg uzemel.
 	 */
-	private boolean checkSensorState() { // TODO probably wrong, but lets see
+	private boolean checkStationState() { // TODO probably wrong, but lets see
 		boolean i = true;
-		for (Sensor s : this.sensors) {
+		for (CityStation s : this.stations) {
 			if (s.isSubscribed()) {
 				return false;
 			}
@@ -318,11 +318,11 @@ public class Application extends Timed {
 			this.generateAndAddVM(); //
 		}
 		if (this.VmSearch() != null) {
-			this.startSensor();
+			this.startStation();
 			
 		}
 		 // ha erkezett be a kozponti repoba feldolgozatlan adat
-		this.localfilesize = (Sensor.getSensorvalue()[this.sensors.get(0).getCloudnumber()] - this.allgenerateddatasize); 
+		this.localfilesize = (CityStation.getStationvalue()[this.stations.get(0).getCloudnumber()] - this.allgenerateddatasize); 
 		if (this.localfilesize > 0) { 
 			long processed = 0;
 			boolean havevm = true;
@@ -377,7 +377,7 @@ public class Application extends Timed {
 					}
 				}
 			}
-			//System.out.println("osszes: "+Sensor.allsensorsize +" feldolgozott: " +Application.allgenerateddatasize+ " ido: "+Timed.getFireCount());
+			//System.out.println("osszes: "+Station.allstationsize +" feldolgozott: " +Application.allgenerateddatasize+ " ido: "+Timed.getFireCount());
 		}
 		this.countVmRunningTime();	
 
@@ -392,8 +392,8 @@ public class Application extends Timed {
 		this.tmap.put(Timed.getFireCount(), task);
 		this.turnoffVM();
 		// kilepesi feltetel az app szamara
-		if (Application.feladatszam == 0 && checkSensorState()
-				&& (Sensor.getSensorvalue()[this.sensors.get(0).getCloudnumber()]) == this.allgenerateddatasize
+		if (Application.feladatszam == 0 && checkStationState()
+				&& (CityStation.getStationvalue()[this.stations.get(0).getCloudnumber()]) == this.allgenerateddatasize
 				&& this.allgenerateddatasize != 0) {
 			unsubscribe();
 			System.out.println("~~~~~~~~~~~~");

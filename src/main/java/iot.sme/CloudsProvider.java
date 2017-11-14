@@ -14,7 +14,7 @@ import org.xml.sax.SAXException;
 import hu.mta.sztaki.lpds.cloud.simulator.Timed;
 import iot.sme.Application;
 import iot.sme.Scenario;
-import iot.sme.Sensor;
+import iot.sme.CityStation;
 import iot.sme.Application.VmCollector;
 
 public class CloudsProvider extends Provider {
@@ -32,16 +32,16 @@ public class CloudsProvider extends Provider {
 		//amazon
 		if(this.getBofPrice()>0 && this.getBlockOfData()>0){
 			if (filesize <= this.getBlockOfData()) {
-				this.setUserIotCost(Sensor.allsensorsize / filesize * this.getBofPrice() * this.getExchangeRate()
+				this.setUserIotCost(CityStation.allstationsize / filesize * this.getBofPrice() * this.getExchangeRate()
 						/ this.getBofMessagecount());
 			} else {
-				this.setUserIotCost(((Sensor.allsensorsize / this.getBlockOfData()) + 1) * this.getBofPrice()
+				this.setUserIotCost(((CityStation.allstationsize / this.getBlockOfData()) + 1) * this.getBofPrice()
 						* this.getExchangeRate() / this.getBofMessagecount());
 			}
 		}
 		//bluemix
 		if(this.bmList.size()!=0){
-			double tmp= (double) Sensor.allsensorsize / (double)1048576;
+			double tmp= (double) CityStation.allstationsize / (double)1048576;
 			for(Bluemix bm : this.bmList){
 				if (tmp <= bm.mbto && tmp >= bm.mbfrom) {
 					this.setPricePerMB(bm.price);
@@ -52,18 +52,18 @@ public class CloudsProvider extends Provider {
 		//oracle
 		if(this.getAmMessagesPerMonthPerDevice()>0){
 			for(Application a : Application.getApp()){
-				for(Sensor s : a.sensors){
+				for(CityStation s : a.stations){
 					long month = s.getSd().getLifetime()/(this.getFreq());
 					if(month==0){
 						month=1;
-						this.setUserIotCost(this.getUserIotCost()+this.getDevicepricePerMonth()*s.getSd().getSensornumber()*month);
+						this.setUserIotCost(this.getUserIotCost()+this.getDevicepricePerMonth()*s.getSensorsAmount()*month);
 					}else if(s.getSd().getLifetime()%(this.getFreq())!=0){
-						this.setUserIotCost(this.getUserIotCost()+this.getDevicepricePerMonth()*s.getSd().getSensornumber()*(month+1));
+						this.setUserIotCost(this.getUserIotCost()+this.getDevicepricePerMonth()*s.getSensorsAmount()*(month+1));
 					}else{
-						this.setUserIotCost(this.getUserIotCost()+this.getDevicepricePerMonth()*s.getSd().getSensornumber()*month);
+						this.setUserIotCost(this.getUserIotCost()+this.getDevicepricePerMonth()*s.getSensorsAmount()*month);
 					}
 					/* additional cost*/
-					long device = s.getMessagecount()/s.getSd().getSensornumber();// 1 device hany uzenetet generalt
+					long device = s.getMessagecount()/s.getSensorsAmount();// 1 device hany uzenetet generalt
 					s.setMessagecount(0); 
 					if(device>this.getMessagesPerMonthPerDevice()){
 						device-=this.getMessagesPerMonthPerDevice();
@@ -81,7 +81,7 @@ public class CloudsProvider extends Provider {
 		}
 		//azure
 		if(this.getPricePerMB()>=0 && this.getMessagesPerDay()>0 && filesize<=(this.getMessagesizePerKB()*1024)){
-			long totalMassages=Sensor.allsensorsize  / filesize;
+			long totalMassages=CityStation.allstationsize  / filesize;
 			long msg = totalMassages - usedMessage;
 			usedMessage= msg;
 			if(msg<=this.getMessagesPerDay()){
