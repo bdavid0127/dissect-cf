@@ -111,7 +111,7 @@ public class Scenario {
 					System.exit(0);
 			 }
 			 
-			NodeList nList = doc.getElementsByTagName("Station");
+			NodeList nList = doc.getElementsByTagName("CityStation");
 			for (int temp = 0; temp < nList.getLength(); temp++) {
 				Node nNode = nList.item(temp);
 				if (nNode.getNodeType() == Node.ELEMENT_NODE) {
@@ -212,8 +212,6 @@ public class Scenario {
 					
 					/*
 					 * Letrejon a station, aztan a Sensor osztaly letrehozza a hozza tartozo szenzorokat.
-					 * Jelenleg egy stationre mukodik,javitani!!
-					 * (Az elejerol olvas ujra)
 					 * 
 					 * */
 				

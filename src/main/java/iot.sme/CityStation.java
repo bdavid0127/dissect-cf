@@ -35,7 +35,7 @@ public class CityStation extends Timed {
 	 * Egy CityStation osszes szenzoranak egy meres altal generalt adatmennyisege.
 	 */
 	
-	public long totaldatasize;
+	public long totaldatasize = 0;
 	
 	
 	/**
@@ -61,6 +61,7 @@ public class CityStation extends Timed {
 	 */
 	
 	public long getTotalDataSize(){
+		totaldatasize=0;
 		for (Sensor.Sensordata sensordata : this.sensors) {
 			totaldatasize+=sensordata.size;}
 			return totaldatasize;
@@ -164,6 +165,11 @@ public class CityStation extends Timed {
 		/*public int getSensornumber() {
 			return sensornumber;
 		}*/
+		
+		
+		public long getStoptime() {
+			return stoptime;
+		}
 
 		/**
 		 * Constructor creates useful and necessary data for work of a station.
@@ -270,6 +276,16 @@ public class CityStation extends Timed {
 	 * in the same network. Szukseges a lokalis es a cel repository kozos
 	 * halozatba szervezeshez.
 	 */
+	
+	/**
+	 * Getter a time valtozohoz
+	 * @return a time erteke
+	 */
+	
+	public long getTime() {
+		return time;
+	}
+	
 	private HashMap<String, Integer> lmap;
 
 	/**
@@ -302,7 +318,16 @@ public class CityStation extends Timed {
 	 * station, egyebkent hamis
 	 */
 	private boolean isWorking;
-
+	
+	/**
+	 * Getter a Station mukodesenek megallapitasahoz.
+	 * 
+	 * */
+	
+	public boolean getIsWorking() {
+		return isWorking;
+	}
+	
 	/**
 	 * If true the Metering() method will be randomly delayed. Ha igaz,akkor a
 	 * Metering() metodus random kesleltetve lesz.
@@ -650,35 +675,31 @@ public class CityStation extends Timed {
 		if (Timed.getFireCount() < (sd.lifetime + this.time) && Timed.getFireCount() >= (sd.starttime + this.time)
 				&& Timed.getFireCount() <= (sd.stoptime + this.time)) {
 
-			//mar a senzorokkal dolgozik,kulonbozo meretu (size) szenzorokkal egyenlore hibas!!!
+			//elindult a station es elinditja az osszes szensorat
+			//a subscribe mukodese miatt, a station kovetkezo tick-je nem befolyasolja a megfelelo mukodest
 			for (Sensor.Sensordata sensordata : this.sensors) {
-				if (this.randommetering == true) {
 
-					Random randomGenerator = new Random();
-					int randomInt = randomGenerator.nextInt(60) + 1;
-					new Metering(this, i, sensordata.size, 1000 * randomInt);
-
-				} else {
-
-					new Metering(this, i, sensordata.size, 1);
-				}
+				sensordata.startSensor(this.randommetering, this);
 
 			}
 		}
 		// a station mukodese addig amig az osszes SO el nem lett kuldve -
 		// stations work while there are data unsent
 		if (this.repo.getFreeStorageCapacity() == reposize && Timed.getFireCount() > (sd.lifetime + this.time)) {
+			//for (Sensor.Sensordata sensordata : this.sensors) {
+			//	sensordata.stopSensor();
+			//}
 			this.stopMeter();
 		}
 
 		// kozponti tarolo a cel repo - target is a cloud
+		//az alapveto tovabbitas getTotalDataSize metodus elven mukodik, azaz mikor minden szenzor generalt egy egyseg adatot
 		if (this.cloud.getIaas().repositories.contains(this.torepo)) {
 			// megkeresi a celrepo-t es elkuldeni annak - looking for the
 			// repository then sending the data
 			try {
 				if (this.torepo != null) {
-					if ((this.repo.getMaxStorageCapacity() - this.repo.getFreeStorageCapacity()) >= sd.ratio
-							* this.sensors.get(0).getSize()
+					if ((this.repo.getMaxStorageCapacity() - this.repo.getFreeStorageCapacity()) >= getTotalDataSize()
 							|| isSubscribed() == false) {
 						this.startCommunicate(this.torepo);
 					}
@@ -707,7 +728,7 @@ public class CityStation extends Timed {
 			// megkeresi a celrepo-t es elkuldeni annak - looking for the
 			// repository then sending the data
 			try {
-				if ((this.repo.getMaxStorageCapacity() - this.repo.getFreeStorageCapacity()) >= sd.ratio * this.sensors.get(0).getSize()
+				if ((this.repo.getMaxStorageCapacity() - this.repo.getFreeStorageCapacity()) >= getTotalDataSize()
 						|| isSubscribed() == false) {
 					if (this.vm != null) {
 						if (vm.getState().equals(VirtualMachine.State.RUNNING)) {
