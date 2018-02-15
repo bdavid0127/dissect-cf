@@ -185,7 +185,7 @@ public class Application extends Timed {
 			for (final CityStation s : this.stations) {
 				Random randomGenerator = new Random();
 				int randomInt = randomGenerator.nextInt(21);
-				if (delay) {
+				if (false) {  //itt mar elvileg nem kell semmi kesleltetes,ezert atirtam falsera()
 					new DeferredEvent((long) randomInt * 60 * 1000) {
 
 						@Override

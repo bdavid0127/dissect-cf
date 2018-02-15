@@ -36,6 +36,7 @@ public class Scenario {
 	
 	private static int filesize;
 	private static long simulatedTime;
+	private static boolean randommetering; //random sensorinditasi kesleltetes (0-20 perc mint korabban)
 	
 
 	private void loging() throws FileNotFoundException, UnsupportedEncodingException{
@@ -196,17 +197,21 @@ public class Scenario {
 					}
 					
 					
+					//szenzorok szama is kimentve
+					final int sensornumber=Integer.parseInt(eElement.getElementsByTagName("sensors")
+							.item(0).getAttributes().item(0).getNodeValue());
+					
 					//fajlmeret és szenzorok szama innen kikerultek
 					
 					for(int i=0;i<stationnumber;i++){
 						Stationdata sd = new Stationdata(time, starttime, stoptime, freq,
 								eElement.getElementsByTagName("name").item(0).getTextContent()+" "+i,
 								eElement.getElementsByTagName("torepo").item(0).getTextContent(), ratio);
-						CityStation citystation = new CityStation(maxinbw, maxoutbw, diskbw, reposize, sd, false);
+						CityStation citystation = new CityStation(maxinbw, maxoutbw, diskbw, reposize, sd, Scenario.randommetering); //utolso parameter a random kesleltetes volt,most ez a szenzorinditashoz kapcsolodo
 						CityStation.getStations().add(citystation);
 						Sensor itsensors = new Sensor();
-						itsensors.readSensorData(stationfile,citystation);
-						
+						itsensors.readSensorData(stationfile,citystation,sensornumber);
+						if(i!=(stationnumber-1)) {Sensor.counter--;}  // ez a sor biztositja a tobb ugyanolyan station megfelelo kezeleset
 					}
 					Scenario.simulatedTime=(Scenario.simulatedTime<time)?time:Scenario.simulatedTime;
 					
@@ -240,6 +245,7 @@ public class Scenario {
 							break;
 						}
 					}
+					//kesleltetest 3. parameter adta korabban, stationok kesleltetett indulasaert felelt (mar felesleges,de attekinthetoseg vegett egyenlore maradt)
 					Application.getApp().add(new Application(appfreq,tasksize,true,print,cloud,stations,(i+1)+". app:",Provider.getProviderList().get(0)));
 				}
 			}
@@ -264,7 +270,10 @@ public class Scenario {
 		 * @param args Az elso argumentumkent adhato meg a Station-okat leiro XML eleresi utvonala
 		 * 			masodik argumentumkent az IaaS-t leiro XML eleresi utvonala
 		 * 			harmadik argumentumkent a provider-eket leiro XML fajl eleresi utvonala 
-		 * 			negyedikkent egy szam, ami ha 1-es, akkor a logolasi funkcio be van kapcsolva
+		 * 			negyedik argumentum egy cproviderfile
+		 * 			ötödik egy szam, ami ha 1-es, akkor a logolasi funkcio be van kapcsolva
+		 * 			hatodik argumentum adja meg hogy legyen-e random kesleltetett (0-20) szenzorindulas
+		 * 			(jelenleg beegetve)
 		 */
 		public static void main(String[] args) throws Exception {
 			
@@ -276,14 +285,17 @@ public class Scenario {
 			int print=Integer.parseInt(args[4]);
 			*/
 
-			String datafile="C:\\Users\\David\\Desktop\\dissect-cf-pricing\\src\\main\\resources\\CityStation.xml";
+			String datafile="C:\\Users\\David\\Desktop\\dissect-cf-pricing\\src\\main\\resources\\David_input.xml";
 			String cloudfile="C:\\Users\\David\\Desktop\\dissect-cf-pricing\\src\\main\\resources\\LPDSCloud.xml";
 			String providerfile="C:\\Users\\David\\Desktop\\dissect-cf-pricing\\src\\main\\resources\\Provider.xml";
 			String cproviderfile="C:\\Users\\David\\Desktop\\dissect-cf-pricing\\src\\main\\resources\\CProvider.xml";
 			int print = 1;
+			Scenario.randommetering=false;
 
 			//int print=Integer.parseInt(args[4]);
 
 			new Scenario(datafile,cloudfile,providerfile,cproviderfile,print,1,5*60000);	
+			
+			Timed.simulateUntilLastEvent();
 		}
 }

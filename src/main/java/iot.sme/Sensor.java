@@ -14,6 +14,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import hu.mta.sztaki.lpds.cloud.simulator.DeferredEvent;
 import hu.mta.sztaki.lpds.cloud.simulator.Timed;
 import hu.mta.sztaki.lpds.cloud.simulator.io.StorageObject;
 import hu.mta.sztaki.lpds.cloud.simulator.io.NetworkNode.NetworkException;
@@ -100,8 +101,25 @@ public class Sensor {
 			this.randommetering = rm;
 			this.citystation = cs;
 			subscribe(this.getSensorfreq());
+			
+				Random randomGenerator = new Random();
+				int randomInt = randomGenerator.nextInt(21);
+				if (rm) {
+					new DeferredEvent((long) randomInt * 60 * 1000) {
+
+						@Override
+						protected void eventAction() {
+							subscribe(getSensorfreq());
+							System.out.println("Elindult a szenzor: " + Timed.getFireCount());
+						}
+					};
+				} else {
+					subscribe(this.getSensorfreq());
+					System.out.println("Elindult a szenzor: " + Timed.getFireCount());
+				}	
 		}
 
+		
 		/*
 		 * Megallitja a szensorok mukodeset.
 		 * */
@@ -118,8 +136,9 @@ public class Sensor {
 		public void tick(long fires) {
 		
 		//megallasi feltetel,ha a mukodesi idot tullepjuk, vagy a station valamiert leall
-			if((citystation.getSd().getStoptime() + citystation.getTime()) > Timed.getFireCount() || citystation.getIsWorking() == false) {
+			if((citystation.getSd().getStoptime() + citystation.getTime()) < Timed.getFireCount() || citystation.getIsWorking() == false) {
 				stopSensor();
+				System.out.println("Sensor megallt" + Timed.getFireCount()) ;
 			}
 			
 			if (this.randommetering == true) {
@@ -143,11 +162,10 @@ public class Sensor {
 		
 /*
  * Ez a metodus olvassa be a sensor adatokat,Scenario hivja, Citystation sensors lista tarolja a peldanyokat.
- * XML feldolgozast javitani!
  * 
  */
 	
-public void readSensorData(String stationfile,CityStation citystation)throws SAXException, IOException, ParserConfigurationException, NetworkException {
+public void readSensorData(String stationfile,CityStation citystation,int sensornumber)throws SAXException, IOException, ParserConfigurationException, NetworkException {
 	
 	if (stationfile.isEmpty()) {
 		System.out.println("Datafile nem lehet null");
@@ -161,8 +179,9 @@ public void readSensorData(String stationfile,CityStation citystation)throws SAX
 		
 		//NodeList nListStation = doc.getElementsByTagName("CityStation");
 		NodeList nList = doc.getElementsByTagName("sensor");
+
 		
-		for (int temp = counter*5 ; temp < (counter*5) + 5; temp++) {
+		for (int temp = counter*sensornumber ; temp < (counter*sensornumber) + sensornumber; temp++) {
 			Node nNode = nList.item(temp);
 			if (nNode.getNodeType() == Node.ELEMENT_NODE) {
 				Element eElement = (Element) nNode;

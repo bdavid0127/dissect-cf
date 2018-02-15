@@ -600,9 +600,21 @@ public class CityStation extends Timed {
 	public void startMeter(final long interval) {
 		if (isWorking) {
 			subscribe(interval);
+			System.out.println("Station feliratkozik");
 			this.time = Timed.getFireCount();
 			this.pm = this.findPm(sd.torepo);
 			this.torepo = this.findRepo(sd.torepo);
+		
+			//mikor elindul a station,indulnak a szenzorai(akar kesleltetve)
+			for (Sensor.Sensordata sensordata : this.sensors) {
+
+				//System.out.println(sensordata.sensorfreq);
+				sensordata.startSensor(this.randommetering, this);
+				//System.out.println("Elindult egy szenzor! " + Timed.getFireCount());
+
+			}
+			
+			
 		}
 	}
 
@@ -677,11 +689,13 @@ public class CityStation extends Timed {
 
 			//elindult a station es elinditja az osszes szensorat
 			//a subscribe mukodese miatt, a station kovetkezo tick-je nem befolyasolja a megfelelo mukodest
-			for (Sensor.Sensordata sensordata : this.sensors) {
+			//for (Sensor.Sensordata sensordata : this.sensors) {
 
-				sensordata.startSensor(this.randommetering, this);
+				//System.out.println(sensordata.sensorfreq);
+				//sensordata.startSensor(this.randommetering, this);
+				//System.out.println("Elindult egy szenzor! " + Timed.getFireCount());
 
-			}
+			//}
 		}
 		// a station mukodese addig amig az osszes SO el nem lett kuldve -
 		// stations work while there are data unsent
