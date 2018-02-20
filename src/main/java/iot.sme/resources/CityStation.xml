@@ -15,7 +15,7 @@
 
 					<size>10</size>
 					
-					<rndmeter>true</rndmeter>
+					<rndmeter value='50'>true</rndmeter>
 
 				</sensor>
 
@@ -29,7 +29,7 @@
 
 					<size>10</size>
 					
-					<rndmeter>true</rndmeter>
+					<rndmeter value='50'>true</rndmeter>
 
 				</sensor>
 
@@ -43,7 +43,7 @@
 
 					<size>10</size>
 					
-					<rndmeter>true</rndmeter>
+					<rndmeter value='50'>true</rndmeter>
 
 				</sensor>
 
@@ -57,7 +57,7 @@
 
 					<size>10</size>
 					
-					<rndmeter>true</rndmeter>
+					<rndmeter value='50'>true</rndmeter>
 
 				</sensor>
 
@@ -71,7 +71,7 @@
 
 					<size>10</size>
 					
-					<rndmeter>true</rndmeter>
+					<rndmeter value='50'>true</rndmeter>
 
 				</sensor>
 
@@ -116,7 +116,7 @@
 
 					<size>10</size>
 					
-					<rndmeter>true</rndmeter>
+					<rndmeter value='40'>true</rndmeter>
 
 				</sensor>
 
@@ -130,7 +130,7 @@
 
 					<size>10</size>
 					
-					<rndmeter>true</rndmeter>
+					<rndmeter value='40'>true</rndmeter>
 
 				</sensor>
 
@@ -144,7 +144,7 @@
 
 					<size>10</size>
 					
-					<rndmeter>true</rndmeter>
+					<rndmeter value='50'>true</rndmeter>
 
 				</sensor>
 
@@ -158,7 +158,7 @@
 
 					<size>10</size>
 					
-					<rndmeter>true</rndmeter>
+					<rndmeter value='50'>true</rndmeter>
 
 				</sensor>
 
@@ -172,7 +172,7 @@
 
 					<size>10</size>
 					
-					<rndmeter>false</rndmeter>
+					<rndmeter value='50'>false</rndmeter>
 
 				</sensor>
 

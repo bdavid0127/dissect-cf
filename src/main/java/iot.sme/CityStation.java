@@ -335,12 +335,6 @@ public class CityStation extends Timed {
 	}
 	
 	/**
-	 * If true the Metering() method will be randomly delayed. Ha igaz,akkor a
-	 * Metering() metodus random kesleltetve lesz.
-	 */
-	private boolean randommetering;
-
-	/**
 	 * Reference for an IaaS Service which is the same network with this
 	 * station. Referencia arra a felhore, amellyel a station kozos halozatban
 	 * van.
@@ -500,13 +494,9 @@ public class CityStation extends Timed {
 	 *            the size of the local repository - a lokalis repository merete
 	 * @param sd
 	 *            the main data of the station - a station fobb tulajdonsagai
-	 * @param randommetering
-	 *            if true the Metering() method will be delayed - ha true, akkor
-	 *            a Metering() hivas keslelteve lesz
 	 * @throws NetworkException 
 	 */
-	public CityStation(long maxinbw, long maxoutbw, long diskbw, long reposize, final Stationdata sd,
-			boolean randommetering) throws NetworkException {
+	public CityStation(long maxinbw, long maxoutbw, long diskbw, long reposize, final Stationdata sd) throws NetworkException {
 		this.vm = null;
 		this.i = 0;
 		this.sd = sd;
@@ -518,7 +508,6 @@ public class CityStation extends Timed {
 		lmap.put(sd.torepo, lat);
 		this.reposize = reposize;
 		repo = new Repository(this.reposize, sd.name, maxinbw, maxoutbw, diskbw, lmap, defaultStorageTransitions, defaultNetworkTransitions);
-		this.randommetering = randommetering;
 		this.repo.setState(NetworkNode.State.RUNNING);
 	}
 
@@ -636,7 +625,7 @@ public class CityStation extends Timed {
 			for (Sensor.Sensordata sensordata : this.sensors) {
 
 				//System.out.println(sensordata.sensorfreq);
-				sensordata.startSensor(this.randommetering, this);
+				sensordata.startSensor(this);
 				//System.out.println("Elindult egy szenzor! " + Timed.getFireCount());
 
 			}
@@ -718,7 +707,7 @@ public class CityStation extends Timed {
 			//for (Sensor.Sensordata sensordata : this.sensors) {
 
 				//System.out.println(sensordata.sensorfreq);
-				//sensordata.startSensor(this.randommetering, this);
+				//sensordata.startSensor(this);
 				//System.out.println("Elindult egy szenzor! " + Timed.getFireCount());
 
 			//}
@@ -790,7 +779,7 @@ public class CityStation extends Timed {
 	public String toString() {
 		return "Station [sd=" + sd + ", repo=" + repo + ", torepo=" + torepo + ", reposize=" + reposize + ", time="
 				+ time + ", lmap=" + lmap + ", lat=" + lat + ", i=" + i + ", vm=" + vm + ", pm=" + pm + ", isWorking="
-				+ isWorking + ", randommetering=" + randommetering + ", cloud=" + cloud + ", cloudnumber=" + cloudnumber
+				+ isWorking + ", cloud=" + cloud + ", cloudnumber=" + cloudnumber
 				+ ", messagecount=" + messagecount + ", generatedfilesize=" + generatedfilesize + "]";
 	}
 }

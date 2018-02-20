@@ -36,8 +36,6 @@ public class Scenario {
 	
 	private static int filesize;
 	private static long simulatedTime;
-	private static boolean randommetering; //random sensorinditasi kesleltetes (0-20 perc mint korabban)
-	
 
 	private void loging() throws FileNotFoundException, UnsupportedEncodingException{
 			int i=0;
@@ -214,7 +212,7 @@ public class Scenario {
 						Stationdata sd = new Stationdata(time, starttime, stoptime, freq,
 								eElement.getElementsByTagName("name").item(0).getTextContent()+" "+i,
 								eElement.getElementsByTagName("torepo").item(0).getTextContent(), ratio, rndstart , rndstartvalue);
-						CityStation citystation = new CityStation(maxinbw, maxoutbw, diskbw, reposize, sd, Scenario.randommetering); //utolso parameter a random kesleltetes volt,most ez a szenzorinditashoz kapcsolodo
+						CityStation citystation = new CityStation(maxinbw, maxoutbw, diskbw, reposize, sd);
 						CityStation.getStations().add(citystation);
 						Sensor itsensors = new Sensor();
 						itsensors.readSensorData(stationfile,citystation,sensornumber);
@@ -297,7 +295,6 @@ public class Scenario {
 			String providerfile="C:\\Users\\David\\Desktop\\dissect-cf-pricing\\src\\main\\resources\\Provider.xml";
 			String cproviderfile="C:\\Users\\David\\Desktop\\dissect-cf-pricing\\src\\main\\resources\\CProvider.xml";
 			int print = 1;
-			Scenario.randommetering=false;
 
 			//int print=Integer.parseInt(args[4]);
 

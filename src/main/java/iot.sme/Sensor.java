@@ -43,6 +43,9 @@ public class Sensor {
 		public String type;   // a szenzor tipusa, jelenleg 5 fele
 		public long sensorfreq;    //a szensor frekvenciaja, ezzel az idokozzel general adatot(merest)
 		public int size;   // egy meres/adat merete
+		public boolean randommetering;
+		public int maxrandommeteringint;
+		
 		
 		public int getSize() {
 			return this.size;
@@ -75,6 +78,20 @@ public class Sensor {
 		public void setSensorfreq(long sensorfreq) {
 			this.sensorfreq=sensorfreq;
 		}
+		public boolean getRandomMetering() {
+			return this.randommetering;
+		}
+		
+		public void setRandomMetering(boolean randommetering) {
+			this.randommetering=randommetering;
+		}
+		public int getMaxRandomMeteringInt() {
+			return this.maxrandommeteringint;
+		}
+		
+		public void setMaxRandomMeteringInt(int maxrandommeteringint) {
+			this.maxrandommeteringint=maxrandommeteringint;
+		}
 		
 		/*
 		 * A szensor konstruktora.
@@ -82,41 +99,27 @@ public class Sensor {
 		 * A CityStation hivasara a readSensorData metodus hozza letre a megfelelo szamu szenzort xml fajl alapjan.
 		 * */
 		
-		public Sensordata(int id,String type,long sensorfreq,int size) {
+		public Sensordata(int id,String type,long sensorfreq,int size, boolean randommetering, int maxrandommeteringint) {
 			this.id = id;
 			this.type = type;
 			this.sensorfreq = sensorfreq;
 			this.size = size;
+			this.randommetering = randommetering;
+			this.maxrandommeteringint = maxrandommeteringint;
 		}
 		
-		
-		boolean randommetering = false;
 		CityStation citystation;  //hivatkozas a szenzort tarolo CityStationre
 		
 		/*
 		 * A CityStation hívja minden tarolt szenzorara,az egyes szenzorok mereseit inditja el.
 		 * 
 		 * */
-		public void startSensor(boolean rm, CityStation cs) {
-			this.randommetering = rm;
+		public void startSensor(CityStation cs) {
 			this.citystation = cs;
-			subscribe(this.getSensorfreq());
 			
-				Random randomGenerator = new Random();
-				int randomInt = randomGenerator.nextInt(21);
-				if (rm) {
-					new DeferredEvent((long) randomInt * 60 * 1000) {
-
-						@Override
-						protected void eventAction() {
-							subscribe(getSensorfreq());
-							System.out.println("Elindult a szenzor: " + Timed.getFireCount());
-						}
-					};
-				} else {
-					subscribe(this.getSensorfreq());
-					System.out.println("Elindult a szenzor: " + Timed.getFireCount());
-				}	
+			subscribe(this.getSensorfreq());
+			System.out.println("Elindult a szenzor: " + Timed.getFireCount());
+					
 		}
 
 		
@@ -144,9 +147,9 @@ public class Sensor {
 			if (this.randommetering == true) {
 
 				Random randomGenerator = new Random();
-				int randomInt = randomGenerator.nextInt(60) + 1;
+				int randomInt = randomGenerator.nextInt(maxrandommeteringint) + 1;
 				new Metering(citystation, this.getId(), this.size, 1000 * randomInt);
-
+				//System.out.println("Ez a szenzor: " + randommetering + " randommetering ertekkel rendelkezik, max kesleltetese: " + maxrandommeteringint);
 			} else {
 
 				new Metering(citystation, this.getId(), this.size, 1);
@@ -190,7 +193,10 @@ public void readSensorData(String stationfile,CityStation citystation,int sensor
 				String type = eElement.getElementsByTagName("type").item(0).getTextContent();
 				long sensorfreq = Long.parseLong(eElement.getElementsByTagName("sensorfreq").item(0).getTextContent());
 				int size = Integer.parseInt(eElement.getElementsByTagName("size").item(0).getTextContent());
-				citystation.getSensors().add(new Sensor.Sensordata(id,type,sensorfreq,size));
+				boolean randommetering = Boolean.parseBoolean(eElement.getElementsByTagName("rndmeter").item(0).getTextContent());
+				int maxrandommeteringint=Integer.parseInt(eElement.getElementsByTagName("rndmeter")
+						.item(0).getAttributes().item(0).getNodeValue());
+				citystation.getSensors().add(new Sensor.Sensordata(id,type,sensorfreq,size,randommetering,maxrandommeteringint));
 				
 				System.out.println("SensorAdatok: " + id + " , " + type + " , " + sensorfreq + " , " + size + "!");
 			}
