@@ -1,101 +1,205 @@
 <?xml version="1.0"?>
 <application tasksize='250000'>
-<CityStation>
-<name count='1'>Messina</name>
+	<CityStation>
+		<name count='4'>Messina</name>
 
-<sensors>
-	<sensor>
-        <id>1</id>
-        <type>temperature</type>
-        <sensorfreq>10000</sensorfreq>
-        <size>13</size>
-    </sensor>
-   <sensor>
-        <id>2</id>
-        <type>brightness</type>
-        <sensorfreq>10000</sensorfreq>
-        <size>13</size>
-    </sensor>
-	<sensor>
-        <id>3</id>
-        <type>humidity</type>
-        <sensorfreq>10000</sensorfreq>
-        <size>13</size>
-    </sensor>
-	<sensor>
-        <id>4</id>
-        <type>pressure</type>
-        <sensorfreq>10000</sensorfreq>
-        <size>13</size>
-    </sensor>
-	<sensor>
-        <id>5</id>
-        <type>noize</type>
-        <sensorfreq>10000</sensorfreq>
-        <size>13</size>
-    </sensor>
-</sensors>
+			<sensors count='5'>
 
-<freq>60000</freq>
-<time starttime='0' stoptime='28800000'>28800000</time>
-<maxinbw>1000</maxinbw>
-<maxoutbw>1000</maxoutbw>
-<diskbw>1000</diskbw>
-<strategy id=''>random</strategy>
-<torepo>ceph</torepo>
-<reposize>60000</reposize>
-<ratio>1</ratio>
-</CityStation>
+				<sensor>
 
+					<id>1</id>
 
+					<type>temperature</type>
 
+					<sensorfreq>60000</sensorfreq>
 
-<CityStation>
-<name count='1'>qwert</name>
+					<size>10</size>
+					
+					<rndmeter>true</rndmeter>
 
-<sensors>
-	<sensor>
-        <id>1</id>
-        <type>temperature</type>
-        <sensorfreq>20000</sensorfreq>
-        <size>33</size>
-    </sensor>
-   <sensor>
-        <id>2</id>
-        <type>brightness</type>
-        <sensorfreq>20000</sensorfreq>
-        <size>33</size>
-    </sensor>
-	<sensor>
-        <id>3</id>
-        <type>humidity</type>
-        <sensorfreq>20000</sensorfreq>
-        <size>33</size>
-    </sensor>
-	<sensor>
-        <id>4</id>
-        <type>pressure</type>
-        <sensorfreq>20000</sensorfreq>
-        <size>33</size>
-    </sensor>
-	<sensor>
-        <id>5</id>
-        <type>noize</type>
-        <sensorfreq>20000</sensorfreq>
-        <size>33</size>
-    </sensor>
-</sensors>
+				</sensor>
 
-<freq>60000</freq>
-<time starttime='0' stoptime='28800000'>28800000</time>
-<maxinbw>1000</maxinbw>
-<maxoutbw>1000</maxoutbw>
-<diskbw>1000</diskbw>
-<strategy id='1'>cloud</strategy>
-<torepo>ceph</torepo>
-<reposize>60000</reposize>
-<ratio>1</ratio>
-</CityStation>
+			   <sensor>
+
+					<id>2</id>
+
+					<type>brightness</type>
+
+					<sensorfreq>60000</sensorfreq>
+
+					<size>10</size>
+					
+					<rndmeter>true</rndmeter>
+
+				</sensor>
+
+				<sensor>
+
+					<id>3</id>
+
+					<type>humidity</type>
+
+					<sensorfreq>60000</sensorfreq>
+
+					<size>10</size>
+					
+					<rndmeter>true</rndmeter>
+
+				</sensor>
+
+				<sensor>
+
+					<id>4</id>
+
+					<type>pressure</type>
+
+					<sensorfreq>60000</sensorfreq>
+
+					<size>10</size>
+					
+					<rndmeter>true</rndmeter>
+
+				</sensor>
+
+				<sensor>
+
+					<id>5</id>
+
+					<type>noize</type>
+
+					<sensorfreq>60000</sensorfreq>
+
+					<size>10</size>
+					
+					<rndmeter>true</rndmeter>
+
+				</sensor>
+
+			</sensors>
 
 
+
+		<freq>60000</freq>
+
+		<time starttime='0' stoptime='86400000'>86400000</time>
+
+		<maxinbw>1000</maxinbw>
+
+		<maxoutbw>1000</maxoutbw>
+
+		<diskbw>1000</diskbw>
+
+		<strategy id=''>random</strategy>
+
+		<torepo>ceph</torepo>
+
+		<reposize>60000</reposize>
+
+		<ratio>1</ratio>
+		
+		<rndstart value='20'>true</rndstart>
+
+	</CityStation>
+	
+		<CityStation>
+		<name count='3'>Messina</name>
+
+			<sensors count='5'>
+
+				<sensor>
+
+					<id>1</id>
+
+					<type>temperature</type>
+
+					<sensorfreq>60000</sensorfreq>
+
+					<size>10</size>
+					
+					<rndmeter>true</rndmeter>
+
+				</sensor>
+
+			   <sensor>
+
+					<id>2</id>
+
+					<type>brightness</type>
+
+					<sensorfreq>60000</sensorfreq>
+
+					<size>10</size>
+					
+					<rndmeter>true</rndmeter>
+
+				</sensor>
+
+				<sensor>
+
+					<id>3</id>
+
+					<type>humidity</type>
+
+					<sensorfreq>60000</sensorfreq>
+
+					<size>10</size>
+					
+					<rndmeter>true</rndmeter>
+
+				</sensor>
+
+				<sensor>
+
+					<id>4</id>
+
+					<type>pressure</type>
+
+					<sensorfreq>60000</sensorfreq>
+
+					<size>10</size>
+					
+					<rndmeter>true</rndmeter>
+
+				</sensor>
+
+				<sensor>
+
+					<id>5</id>
+
+					<type>noize</type>
+
+					<sensorfreq>60000</sensorfreq>
+
+					<size>10</size>
+					
+					<rndmeter>false</rndmeter>
+
+				</sensor>
+
+			</sensors>
+
+
+
+		<freq>60000</freq>
+
+		<time starttime='0' stoptime='86400000'>86400000</time>
+
+		<maxinbw>1000</maxinbw>
+
+		<maxoutbw>1000</maxoutbw>
+
+		<diskbw>1000</diskbw>
+
+		<strategy id=''>random</strategy>
+
+		<torepo>ceph</torepo>
+
+		<reposize>60000</reposize>
+
+		<ratio>1</ratio>
+		
+		<rndstart value='7'>false</rndstart>
+
+	</CityStation>
+	
 </application>

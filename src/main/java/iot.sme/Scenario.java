@@ -201,12 +201,19 @@ public class Scenario {
 					final int sensornumber=Integer.parseInt(eElement.getElementsByTagName("sensors")
 							.item(0).getAttributes().item(0).getNodeValue());
 					
+					//adott statation random indljon-e
+					final boolean rndstart = Boolean.parseBoolean(eElement.getElementsByTagName("rndstart").item(0).getTextContent());
+					//random indulas max kesleltetese
+					final int rndstartvalue=Integer.parseInt(eElement.getElementsByTagName("rndstart")
+							.item(0).getAttributes().item(0).getNodeValue());
+					
+					
 					//fajlmeret és szenzorok szama innen kikerultek
 					
 					for(int i=0;i<stationnumber;i++){
 						Stationdata sd = new Stationdata(time, starttime, stoptime, freq,
 								eElement.getElementsByTagName("name").item(0).getTextContent()+" "+i,
-								eElement.getElementsByTagName("torepo").item(0).getTextContent(), ratio);
+								eElement.getElementsByTagName("torepo").item(0).getTextContent(), ratio, rndstart , rndstartvalue);
 						CityStation citystation = new CityStation(maxinbw, maxoutbw, diskbw, reposize, sd, Scenario.randommetering); //utolso parameter a random kesleltetes volt,most ez a szenzorinditashoz kapcsolodo
 						CityStation.getStations().add(citystation);
 						Sensor itsensors = new Sensor();
@@ -285,7 +292,7 @@ public class Scenario {
 			int print=Integer.parseInt(args[4]);
 			*/
 
-			String datafile="C:\\Users\\David\\Desktop\\dissect-cf-pricing\\src\\main\\resources\\David_input.xml";
+			String datafile="C:\\Users\\David\\Desktop\\dissect-cf-pricing\\src\\main\\resources\\CityStation.xml";
 			String cloudfile="C:\\Users\\David\\Desktop\\dissect-cf-pricing\\src\\main\\resources\\LPDSCloud.xml";
 			String providerfile="C:\\Users\\David\\Desktop\\dissect-cf-pricing\\src\\main\\resources\\Provider.xml";
 			String cproviderfile="C:\\Users\\David\\Desktop\\dissect-cf-pricing\\src\\main\\resources\\CProvider.xml";

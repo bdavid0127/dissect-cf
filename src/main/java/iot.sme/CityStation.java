@@ -141,6 +141,10 @@ public class CityStation extends Timed {
 		 * eltarolva kuldes elott.
 		 */
 		private int ratio;
+		
+		
+		private boolean stationdelay;
+		private int maxrandomint;
 
 		/**
 		 * Getter method for data sending-generating frequency of the station.
@@ -200,7 +204,7 @@ public class CityStation extends Timed {
 		 *            elott
 		 */
 		public Stationdata(long lt, long st, long stt, long freq, String name, String torepo,
-				int ratio) {
+				int ratio, boolean stationdelay, int maxrandomint) {
 			this.lifetime = lt;
 			this.starttime = st;
 			this.stoptime = stt;
@@ -210,6 +214,8 @@ public class CityStation extends Timed {
 			this.name = name;
 			this.torepo = torepo;
 			this.ratio = ratio;
+			this.stationdelay = stationdelay;
+			this.maxrandomint = maxrandomint;
 		}
 
 		/**
@@ -598,6 +604,27 @@ public class CityStation extends Timed {
 	 *            frekvencia 2 adatkuldes-adatgeneralas kozott
 	 */
 	public void startMeter(final long interval) {
+		
+		Random randomGenerator = new Random();
+		int randomInt = randomGenerator.nextInt(this.getSd().maxrandomint + 1);
+		if (this.getSd().stationdelay) {
+			new DeferredEvent((long) randomInt * 60 * 1000) {
+
+				@Override
+				protected void eventAction() {
+					System.out.println("Ez egy kesleltetett station indulas");
+					realStartMeter(interval);
+				}
+			};
+		}else {
+		
+		System.out.println("Ez egy nem kesleltetett station indulas");
+		realStartMeter(interval);}
+		
+	}
+
+	
+	public void realStartMeter(final long interval) {
 		if (isWorking) {
 			subscribe(interval);
 			System.out.println("Station feliratkozik");
@@ -614,10 +641,9 @@ public class CityStation extends Timed {
 
 			}
 			
-			
 		}
 	}
-
+	
 	/**
 	 * It stops the station. Used locally because the working time should depend
 	 * on the station lifetime/stoptime. Leallitja a Station mukodeset, hivasa
