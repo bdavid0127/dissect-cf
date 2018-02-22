@@ -236,7 +236,10 @@ public class Scenario {
 				int maxstation = CityStation.getStations().size() / cloudcount;
 				for(int i=0;i<cloudcount;i++){
 					CityStation.getStationvalue()[i]=0;
-					Cloud cloud = new Cloud(cloudfile,null,null,null);
+					
+					
+					AlterableResourceConstraints arc1 = new AlterableResourceConstraints(cp.getCpu(),0.001,cp.getMemory());
+					Cloud cloud = new Cloud(cloudfile,null,null,arc1);
 					Cloud.getClouds().add(cloud);
 					ArrayList<CityStation> stations = new ArrayList<CityStation>();
 					int stationcounter=CityStation.getStations().size()-1;

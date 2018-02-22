@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <application tasksize='250000'>
 	<CityStation>
-		<name count='4'>Messina</name>
+		<name count='50'>Messina</name>
 
 			<sensors count='5'>
 
