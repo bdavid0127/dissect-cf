@@ -14,7 +14,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import cloudprovider.ResourceDependentProvider;
+//import cloudprovider.ResourceDependentProvider;
 
 import org.w3c.dom.Node;
 import hu.mta.sztaki.lpds.cloud.simulator.Timed;
@@ -23,8 +23,8 @@ import hu.mta.sztaki.lpds.cloud.simulator.iaas.constraints.AlterableResourceCons
 import hu.mta.sztaki.lpds.cloud.simulator.io.NetworkNode.NetworkException;
 import iot.sme.Application.VmCollector;
 import iot.sme.CityStation.Stationdata;
-import iotprovider.sme.CloudsProvider;
-import iotprovider.sme.Provider;
+import provider.CloudsProvider;
+import provider.Provider;
 
 import iot.sme.Sensor;
 
@@ -206,7 +206,7 @@ public class Scenario {
 							.item(0).getAttributes().item(0).getNodeValue());
 					
 					
-					//fajlmeret és szenzorok szama innen kikerultek
+					//fajlmeret ï¿½s szenzorok szama innen kikerultek
 					
 					for(int i=0;i<stationnumber;i++){
 						Stationdata sd = new Stationdata(time, starttime, stoptime, freq,
@@ -276,7 +276,7 @@ public class Scenario {
 		 * 			masodik argumentumkent az IaaS-t leiro XML eleresi utvonala
 		 * 			harmadik argumentumkent a provider-eket leiro XML fajl eleresi utvonala 
 		 * 			negyedik argumentum egy cproviderfile
-		 * 			ötödik egy szam, ami ha 1-es, akkor a logolasi funkcio be van kapcsolva
+		 * 			ï¿½tï¿½dik egy szam, ami ha 1-es, akkor a logolasi funkcio be van kapcsolva
 		 * 			hatodik argumentum adja meg hogy legyen-e random kesleltetett (0-20) szenzorindulas
 		 * 			(jelenleg beegetve)
 		 */
@@ -288,14 +288,21 @@ public class Scenario {
 			String providerfile=args[2];
 			String cproviderfile=args[3];
 			int print=Integer.parseInt(args[4]);
-			*/
+			
 
 			String datafile="C:\\Users\\David\\Desktop\\dissect-cf-pricing\\src\\main\\resources\\CityStation.xml";
 			String cloudfile="C:\\Users\\David\\Desktop\\dissect-cf-pricing\\src\\main\\resources\\LPDSCloud.xml";
 			String providerfile="C:\\Users\\David\\Desktop\\dissect-cf-pricing\\src\\main\\resources\\Provider.xml";
-			String cproviderfile="C:\\Users\\David\\Desktop\\dissect-cf-pricing\\src\\main\\resources\\CProvider.xml";
+			String cproviderfile="C:\\Users\\David\\Desktop\\dissect-cf-pricing\\src\\main\\resources\\CProvider.xml";*/
 			int print = 1;
-
+			String datafile="//home//andras//Documents//projektek//bdavid//dissect-cf//src//main//java//resources//CityStation.xml";
+			String cloudfile="//home//andras//Documents//projektek//bdavid//dissect-cf//src//main//java//resources//LPDSCloud.xml";
+			String providerfile="//home//andras//Documents//projektek//bdavid//dissect-cf//src//main//java//resources//Provider.xml";
+			String cproviderfile="//home//andras//Documents//projektek//bdavid//dissect-cf//src//main//java//resources//CProvider.xml";
+			System.out.println(datafile);
+			System.out.println(cloudfile);
+			System.out.println(providerfile);
+			System.out.println(cproviderfile);
 			//int print=Integer.parseInt(args[4]);
 
 			new Scenario(datafile,cloudfile,providerfile,cproviderfile,print,1,5*60000);	

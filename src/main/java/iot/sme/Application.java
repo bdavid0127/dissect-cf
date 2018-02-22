@@ -11,7 +11,7 @@ import hu.mta.sztaki.lpds.cloud.simulator.iaas.VirtualMachine.StateChangeExcepti
 import hu.mta.sztaki.lpds.cloud.simulator.iaas.resourcemodel.ConsumptionEventAdapter;
 import hu.mta.sztaki.lpds.cloud.simulator.iaas.resourcemodel.ResourceConsumption;
 import hu.mta.sztaki.lpds.cloud.simulator.io.NetworkNode.NetworkException;
-import iotprovider.sme.Provider;
+import provider.Provider;
 
 /**
  * This class start virtual machines and run ComputeTasks on it depending on the generated data by the stations.

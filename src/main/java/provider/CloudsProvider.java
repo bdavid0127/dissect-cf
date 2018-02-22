@@ -1,4 +1,4 @@
-package iotprovider.sme;
+package provider;
 
 import java.io.File;
 import java.io.IOException;
