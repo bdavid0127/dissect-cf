@@ -64,7 +64,7 @@ public class CityStation extends Timed {
 	public long getTotalDataSize(){
 		totaldatasize=0;
 		for (Sensor.Sensordata sensordata : this.sensors) {
-			totaldatasize+=sensordata.size;}
+			totaldatasize+=sensordata.getSize();}
 			return totaldatasize;
 		}
 		

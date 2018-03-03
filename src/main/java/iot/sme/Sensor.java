@@ -39,12 +39,12 @@ public class Sensor {
 	
 	public static class Sensordata extends Timed {
 		
-		public int id;    // a szenzor egyedi azonositoja
-		public String type;   // a szenzor tipusa, jelenleg 5 fele
-		public long sensorfreq;    //a szensor frekvenciaja, ezzel az idokozzel general adatot(merest)
-		public int size;   // egy meres/adat merete
-		public boolean randommetering;
-		public int maxrandommeteringint;
+		private int id;    // a szenzor egyedi azonositoja
+		private String type;   // a szenzor tipusa, jelenleg 5 fele
+		private long sensorfreq;    //a szensor frekvenciaja, ezzel az idokozzel general adatot(merest)
+		private int size;   // egy meres/adat merete
+		private boolean randommetering;
+		private int maxrandommeteringint;
 		
 		
 		public int getSize() {
@@ -151,7 +151,6 @@ public class Sensor {
 				new Metering(citystation, this.getId(), this.size, 1000 * randomInt);
 				//System.out.println("Ez a szenzor: " + randommetering + " randommetering ertekkel rendelkezik, max kesleltetese: " + maxrandommeteringint);
 			} else {
-
 				new Metering(citystation, this.getId(), this.size, 1);
 			}
 		}
@@ -159,51 +158,48 @@ public class Sensor {
 		
 	}
 	
-	
 	public static int counter=0; //xml olvasashoz kell
-	
-		
+			
 /*
  * Ez a metodus olvassa be a sensor adatokat,Scenario hivja, Citystation sensors lista tarolja a peldanyokat.
  * 
  */
 	
-public void readSensorData(String stationfile,CityStation citystation,int sensornumber)throws SAXException, IOException, ParserConfigurationException, NetworkException {
+	public void readSensorData(String stationfile,CityStation citystation,int sensornumber)throws SAXException, IOException, ParserConfigurationException, NetworkException {
+		
+		if (stationfile.isEmpty()) {
+			System.out.println("Datafile nem lehet null");
+			System.exit(0);
+		} else {
+			File fXmlFile = new File(stationfile);
+			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+			Document doc = dBuilder.parse(fXmlFile);
+			doc.getDocumentElement().normalize();
+			
+			//NodeList nListStation = doc.getElementsByTagName("CityStation");
+			NodeList nList = doc.getElementsByTagName("sensor");
 	
-	if (stationfile.isEmpty()) {
-		System.out.println("Datafile nem lehet null");
-		System.exit(0);
-	} else {
-		File fXmlFile = new File(stationfile);
-		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-		Document doc = dBuilder.parse(fXmlFile);
-		doc.getDocumentElement().normalize();
-		
-		//NodeList nListStation = doc.getElementsByTagName("CityStation");
-		NodeList nList = doc.getElementsByTagName("sensor");
-
-		
-		for (int temp = counter*sensornumber ; temp < (counter*sensornumber) + sensornumber; temp++) {
-			Node nNode = nList.item(temp);
-			if (nNode.getNodeType() == Node.ELEMENT_NODE) {
-				Element eElement = (Element) nNode;
-
-				int id = Integer.parseInt(eElement.getElementsByTagName("id").item(0).getTextContent());
-				String type = eElement.getElementsByTagName("type").item(0).getTextContent();
-				long sensorfreq = Long.parseLong(eElement.getElementsByTagName("sensorfreq").item(0).getTextContent());
-				int size = Integer.parseInt(eElement.getElementsByTagName("size").item(0).getTextContent());
-				boolean randommetering = Boolean.parseBoolean(eElement.getElementsByTagName("rndmeter").item(0).getTextContent());
-				int maxrandommeteringint=Integer.parseInt(eElement.getElementsByTagName("rndmeter")
-						.item(0).getAttributes().item(0).getNodeValue());
-				citystation.getSensors().add(new Sensor.Sensordata(id,type,sensorfreq,size,randommetering,maxrandommeteringint));
-				
-				System.out.println("SensorAdatok: " + id + " , " + type + " , " + sensorfreq + " , " + size + "!");
+			
+			for (int temp = counter*sensornumber ; temp < (counter*sensornumber) + sensornumber; temp++) {
+				Node nNode = nList.item(temp);
+				if (nNode.getNodeType() == Node.ELEMENT_NODE) {
+					Element eElement = (Element) nNode;
+	
+					int id = Integer.parseInt(eElement.getElementsByTagName("id").item(0).getTextContent());
+					String type = eElement.getElementsByTagName("type").item(0).getTextContent();
+					long sensorfreq = Long.parseLong(eElement.getElementsByTagName("sensorfreq").item(0).getTextContent());
+					int size = Integer.parseInt(eElement.getElementsByTagName("size").item(0).getTextContent());
+					boolean randommetering = Boolean.parseBoolean(eElement.getElementsByTagName("rndmeter").item(0).getTextContent());
+					int maxrandommeteringint=Integer.parseInt(eElement.getElementsByTagName("rndmeter")
+							.item(0).getAttributes().item(0).getNodeValue());
+					citystation.getSensors().add(new Sensor.Sensordata(id,type,sensorfreq,size,randommetering,maxrandommeteringint));
+					
+					System.out.println("SensorAdatok: " + id + " , " + type + " , " + sensorfreq + " , " + size + "!");
+				}
 			}
+			
+		counter++; //biztositja, hogy a megfelelo szensor adatait olvassuk be	
 		}
-		
-	counter++; //biztositja, hogy a megfelelo szensor adatait olvassuk be	
 	}
-}
-
 }
