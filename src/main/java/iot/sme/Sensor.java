@@ -118,7 +118,7 @@ public class Sensor {
 			this.citystation = cs;
 			
 			subscribe(this.getSensorfreq());
-			System.out.println("Elindult a szenzor: " + Timed.getFireCount());
+			//System.out.println("Elindult a szenzor: " + Timed.getFireCount());
 					
 		}
 
@@ -141,7 +141,7 @@ public class Sensor {
 		//megallasi feltetel,ha a mukodesi idot tullepjuk, vagy a station valamiert leall
 			if((citystation.getSd().getStoptime() + citystation.getTime()) < Timed.getFireCount() || citystation.getIsWorking() == false) {
 				stopSensor();
-				System.out.println("Sensor megallt" + Timed.getFireCount()) ;
+				//System.out.println("Sensor megallt " + Timed.getFireCount()) ;
 			}
 			
 			if (this.randommetering == true) {

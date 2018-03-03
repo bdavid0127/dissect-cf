@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<application tasksize='250000'>
+<application tasksize='250000' stopped='9'>
 	<CityStation>
 		<name count='50'>Messina</name>
 
@@ -96,7 +96,7 @@
 		<reposize>60000</reposize>
 
 		<ratio>1</ratio>
-		
+		<!-- Megmondja, hogy a Stationok kesleltetve induljanak-e, ha igen hany perccel.  -->
 		<rndstart value='20'>true</rndstart>
 
 	</CityStation>

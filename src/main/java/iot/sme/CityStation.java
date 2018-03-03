@@ -2,6 +2,7 @@ package iot.sme;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -74,6 +75,72 @@ public class CityStation extends Timed {
 	
 	public int getSensorsAmount() {
 		return sensors.size();
+	}
+	
+	
+	
+	//itt kerulnek az allapotok bevezetesre
+	
+	public static enum State {
+		/**
+		 * The Station is completely switched off.
+		 */
+		SHUTDOWN,
+		/**
+		 * The Station is paused.
+		 */
+		PAUSED,
+		/**
+		 * The Station is running.
+		 */
+		RUNNING,
+	};
+	
+	
+	private State currentState = State.SHUTDOWN;
+	
+	public State getCurrentState() {
+		return currentState;
+	}
+
+	/**
+	 * Station elinditasa
+	 */
+	private void shutdownToRunning() {
+		//System.out.println(currentState);
+		if(this.getCurrentState()==State.SHUTDOWN) {
+			this.currentState=State.RUNNING;
+		//System.out.println(currentState);
+		}
+		else {
+			System.out.println("Hiba, a Station mar mukodik vagy megallitasra kerult.");
+		}
+	}
+	/**
+	 * Station vegso leallitasa
+	 */
+	private void runningToShutdown() {
+		//System.out.println(currentState);
+		if(this.getCurrentState()==State.RUNNING) {
+			this.currentState=State.SHUTDOWN;
+		//System.out.println(currentState);
+		}
+		else {
+			System.out.println("Hiba, a Station mar leallt vagy megallitasra kerult");
+		}
+	}
+	/**
+	 * Station megallitasa
+	 */
+	private void runningToPaused() {
+		//System.out.println(currentState);
+		if(this.getCurrentState()==State.RUNNING) {
+			this.currentState=State.PAUSED;
+		//System.out.println(currentState);
+		}
+		else {
+			System.out.println("Hiba, a Station mar leallt vagy megallitasra kerult");
+		}
 	}
 	
 	/*
@@ -601,13 +668,13 @@ public class CityStation extends Timed {
 
 				@Override
 				protected void eventAction() {
-					System.out.println("Ez egy kesleltetett station indulas");
+					//System.out.println("Ez egy kesleltetett station indulas");
 					realStartMeter(interval);
 				}
 			};
 		}else {
 		
-		System.out.println("Ez egy nem kesleltetett station indulas");
+		//System.out.println("Ez egy nem kesleltetett station indulas");
 		realStartMeter(interval);}
 		
 	}
@@ -615,8 +682,14 @@ public class CityStation extends Timed {
 	
 	public void realStartMeter(final long interval) {
 		if (isWorking) {
+			
+			
+			//itt megvaltozik az allapot runningra
+			shutdownToRunning();
+			//currentState = State.RUNNING;
+			
 			subscribe(interval);
-			System.out.println("Station feliratkozik");
+			//System.out.println("Station feliratkozik");
 			this.time = Timed.getFireCount();
 			this.pm = this.findPm(sd.torepo);
 			this.torepo = this.findRepo(sd.torepo);
@@ -641,9 +714,41 @@ public class CityStation extends Timed {
 	 */
 	private void stopMeter() {
 		isWorking = false;
+		//itt megvaltozik az allapot shutdownra
+		runningToShutdown();
+		//currentState = State.SHUTDOWN;
+		
 		unsubscribe();
 		this.torepo.registerObject(new StorageObject(this.sd.name, generatedfilesize, false));
 	}
+	
+	private void pauseMeter() {
+		
+		Random randomGenerator = new Random();
+		int randomPause = randomGenerator.nextInt(6)+1; //10 perc-1 óra késleltetessel all le
+		
+			new DeferredEvent((long) randomPause * 60 * 10000) {
+				@Override
+				protected void eventAction() {
+					realPauseMeter();
+				}
+			};
+	}
+	
+	private void realPauseMeter() {
+		
+		if(this.currentState!=State.RUNNING) {Scenario.stopped++;}//ha egy korabbi kesleltetes eredmenyekent megallt volna mar
+		else {
+				//itt megvaltozik az allapot pausedra
+				runningToPaused();
+				//currentState = State.PAUSED;
+				
+				System.out.println("Megallitom a stationt");
+				isWorking = false;
+				unsubscribe();
+				this.torepo.registerObject(new StorageObject(this.sd.name, generatedfilesize, false));}
+	}
+	
 
 	/**
 	 * It look for the target repository in the Iaas cloud. Megkeresi a celrepot
@@ -712,6 +817,25 @@ public class CityStation extends Timed {
 
 			//}
 		}
+		
+		while(Scenario.stopped!=0) {
+			
+			//System.out.println("Leallitom " + Scenario.stopped + " .stationt");
+			Random randomGenerator = new Random();
+					
+			int randomStation = randomGenerator.nextInt(stations.size());
+			
+			while(CityStation.getStations().get(randomStation).currentState != State.RUNNING) {
+				randomStation = randomGenerator.nextInt(stations.size());	
+			}
+			stations.get(randomStation).pauseMeter();
+			
+			
+			Scenario.stopped--;
+		}
+		
+		
+		
 		// a station mukodese addig amig az osszes SO el nem lett kuldve -
 		// stations work while there are data unsent
 		if (this.repo.getFreeStorageCapacity() == reposize && Timed.getFireCount() > (sd.lifetime + this.time)) {

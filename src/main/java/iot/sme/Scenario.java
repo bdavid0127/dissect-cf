@@ -22,6 +22,7 @@ import hu.mta.sztaki.lpds.cloud.simulator.iaas.PhysicalMachine;
 import hu.mta.sztaki.lpds.cloud.simulator.iaas.constraints.AlterableResourceConstraints;
 import hu.mta.sztaki.lpds.cloud.simulator.io.NetworkNode.NetworkException;
 import iot.sme.Application.VmCollector;
+import iot.sme.CityStation.State;
 import iot.sme.CityStation.Stationdata;
 import provider.CloudsProvider;
 import provider.Provider;
@@ -36,6 +37,7 @@ public class Scenario {
 	
 	private static int filesize;
 	private static long simulatedTime;
+	static int stopped; //static, mert az egesz rendszerre vonatkozik
 
 	private void loging() throws FileNotFoundException, UnsupportedEncodingException{
 			int i=0;
@@ -73,6 +75,25 @@ public class Scenario {
 			System.out.println("~~~~~~~~~~~~");
 			System.out.println("Scneario finished at: "+Application.getFinishedTime());
 			System.out.println("~~~~~~~~~~~~");
+			//vegul kiirom a megallitott stationok szamat
+			int count = 0;
+			for(CityStation x : CityStation.getStations()) {
+				if(x.getCurrentState() == State.PAUSED) {
+					count++;
+				}
+			}
+			System.out.println("Station paused: "+ count);
+			System.out.println("~~~~~~~~~~~~");
+			//vegul kiirom a leallt stationok szamat
+			int count2 = 0;
+			for(CityStation x : CityStation.getStations()) {
+				if(x.getCurrentState() == State.SHUTDOWN) {
+					count2++;
+				}
+			}
+			System.out.println("Station SHUTDOWN: "+ count2);
+			System.out.println("~~~~~~~~~~~~");
+			
 			for(Cloud c : Cloud.getClouds()){
 				System.out.println(c.getIaas().repositories.toString());
 				for (PhysicalMachine p : c.getIaas().machines) {
@@ -87,6 +108,7 @@ public class Scenario {
 	
 	private static void readStationXml(String stationfile,String cloudfile,String providerfile,String cproviderfile, int cloudcount,int print,long appfreq) throws SAXException, IOException, ParserConfigurationException, NetworkException{
 		long tasksize=-1; // TODO: ez miert kell?!
+		int allstationnumber = 0;
 
 		CityStation.setStationvalue(new long[cloudcount]); 
 		if(cloudcount<1){
@@ -104,11 +126,12 @@ public class Scenario {
 			Document doc = dBuilder.parse(fXmlFile);
 			doc.getDocumentElement().normalize();
 			NodeList NL = doc.getElementsByTagName("application");
-			tasksize = Long.parseLong(NL.item(0).getAttributes().item(0).getNodeValue());
+			tasksize = Long.parseLong(NL.item(0).getAttributes().item(1).getNodeValue());
 			 if(tasksize<=0){
 				 System.out.println("rossz tasksize ertek! ");
 					System.exit(0);
 			 }
+			 System.out.println(tasksize);
 			 
 			NodeList nList = doc.getElementsByTagName("CityStation");
 			for (int temp = 0; temp < nList.getLength(); temp++) {
@@ -193,7 +216,7 @@ public class Scenario {
 						System.out.println("rossz stationnumber ertek! ");
 						System.exit(0);
 					}
-					
+					allstationnumber += stationnumber;
 					
 					//szenzorok szama is kimentve
 					final int sensornumber=Integer.parseInt(eElement.getElementsByTagName("sensors")
@@ -206,7 +229,7 @@ public class Scenario {
 							.item(0).getAttributes().item(0).getNodeValue());
 					
 					
-					//fajlmeret ï¿½s szenzorok szama innen kikerultek
+					//fajlmeret es szenzorok szama innen kikerultek
 					
 					for(int i=0;i<stationnumber;i++){
 						Stationdata sd = new Stationdata(time, starttime, stoptime, freq,
@@ -228,6 +251,13 @@ public class Scenario {
 
 					}
 				}
+			//lementjuk,hany darab stationt kell megallitani
+			 stopped = Integer.parseInt(NL.item(0).getAttributes().item(0).getNodeValue());
+			 if(stopped>allstationnumber){
+				 System.out.println("Nincs ennyi station ");
+					System.exit(0);
+			 }
+			 System.out.println(stopped);
 			}
 			
 			if(tasksize!=-1){
@@ -247,7 +277,7 @@ public class Scenario {
 						CityStation.getStations().get(stationcounter).setCloud(cloud);
 						CityStation.getStations().get(stationcounter).setCloudnumber(i);
 						stations.add(CityStation.getStations().get(stationcounter));
-						CityStation.getStations().remove(stationcounter);
+						//CityStation.getStations().remove(stationcounter); //javítani!!
 						stationcounter--;
 						if(stations.size()>maxstation){
 							break;
@@ -279,7 +309,7 @@ public class Scenario {
 		 * 			masodik argumentumkent az IaaS-t leiro XML eleresi utvonala
 		 * 			harmadik argumentumkent a provider-eket leiro XML fajl eleresi utvonala 
 		 * 			negyedik argumentum egy cproviderfile
-		 * 			ï¿½tï¿½dik egy szam, ami ha 1-es, akkor a logolasi funkcio be van kapcsolva
+		 * 			otodik egy szam, ami ha 1-es, akkor a logolasi funkcio be van kapcsolva
 		 * 			hatodik argumentum adja meg hogy legyen-e random kesleltetett (0-20) szenzorindulas
 		 * 			(jelenleg beegetve)
 		 */
@@ -290,23 +320,15 @@ public class Scenario {
 			String cloudfile=args[1];
 			String providerfile=args[2];
 			String cproviderfile=args[3];
-			int print=Integer.parseInt(args[4]);
+			int print=Integer.parseInt(args[4]);*/
 			
 
-			String datafile="C:\\Users\\David\\Desktop\\dissect-cf-pricing\\src\\main\\resources\\CityStation.xml";
-			String cloudfile="C:\\Users\\David\\Desktop\\dissect-cf-pricing\\src\\main\\resources\\LPDSCloud.xml";
-			String providerfile="C:\\Users\\David\\Desktop\\dissect-cf-pricing\\src\\main\\resources\\Provider.xml";
-			String cproviderfile="C:\\Users\\David\\Desktop\\dissect-cf-pricing\\src\\main\\resources\\CProvider.xml";*/
+			String datafile="C:\\Users\\David\\Desktop\\dissect-cf-sme\\src\\main\\java\\resources\\CityStation.xml";
+			String cloudfile="C:\\Users\\David\\Desktop\\dissect-cf-sme\\src\\main\\java\\\\resources\\LPDSCloud.xml";
+			String providerfile="C:\\Users\\David\\Desktop\\dissect-cf-sme\\src\\main\\java\\\\resources\\Provider.xml";
+			String cproviderfile="C:\\Users\\David\\Desktop\\dissect-cf-sme\\src\\main\\java\\\\resources\\CProvider.xml";
 			int print = 1;
-			String datafile="//home//andras//Documents//projektek//bdavid//dissect-cf//src//main//java//resources//CityStation.xml";
-			String cloudfile="//home//andras//Documents//projektek//bdavid//dissect-cf//src//main//java//resources//LPDSCloud.xml";
-			String providerfile="//home//andras//Documents//projektek//bdavid//dissect-cf//src//main//java//resources//Provider.xml";
-			String cproviderfile="//home//andras//Documents//projektek//bdavid//dissect-cf//src//main//java//resources//CProvider.xml";
-			System.out.println(datafile);
-			System.out.println(cloudfile);
-			System.out.println(providerfile);
-			System.out.println(cproviderfile);
-			//int print=Integer.parseInt(args[4]);
+			
 
 			new Scenario(datafile,cloudfile,providerfile,cproviderfile,print,1,5*60000);	
 			

@@ -11,6 +11,7 @@ import hu.mta.sztaki.lpds.cloud.simulator.iaas.VirtualMachine.StateChangeExcepti
 import hu.mta.sztaki.lpds.cloud.simulator.iaas.resourcemodel.ConsumptionEventAdapter;
 import hu.mta.sztaki.lpds.cloud.simulator.iaas.resourcemodel.ResourceConsumption;
 import hu.mta.sztaki.lpds.cloud.simulator.io.NetworkNode.NetworkException;
+import iot.sme.CityStation.State;
 import provider.Provider;
 
 /**
@@ -250,10 +251,10 @@ public class Application extends Timed {
 	/**
 	 * A metodus megvizsgalja, hogy van-e olyan Station, amelyik meg uzemel.
 	 */
-	private boolean checkStationState() { // TODO probably wrong, but lets see
+	private boolean checkStationState() {
 		boolean i = true;
 		for (CityStation s : this.stations) {
-			if (s.isSubscribed()) {
+			if (s.getCurrentState() == CityStation.State.RUNNING) {
 				return false;
 			}
 		}
